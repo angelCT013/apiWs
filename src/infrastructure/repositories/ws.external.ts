@@ -21,14 +21,7 @@ class WsTransporter extends Client implements LeadExternal {
     });
 
     console.log("Iniciando....");
-    const puppeteer = require('puppeteer');
-    (async() => {
-      const browser = await puppeteer.launch({args: ['--no-sandbox']});
-      const page = await browser.newPage();
-      await page.goto('https://example.com');
-      await page.screenshot({path: 'example.png'});
-      browser.close();
-    })();
+   
     this.initialize();
 
     this.on("ready", () => {
