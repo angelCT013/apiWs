@@ -22,8 +22,11 @@ export class LeadCreate {
     await Promise.all(
       arrayPhone.map(async (phoneNumber) => {
         const responseExSave = await this.leadExternal.sendMsg({ message, phone: phoneNumber });
+        console.log(responseExSave);
+        
         if(responseExSave.id){
           resultados.push(phoneNumber);
+          resultados.push(responseExSave.idChats);
 
         }
       })
