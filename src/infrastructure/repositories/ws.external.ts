@@ -61,8 +61,17 @@ class WsTransporter extends Client implements LeadExternal {
       }
 
       const response = await this.sendMessage(`${phone}@c.us`, message);
-      // Cerrar la página después de enviar el mensaje
+
+      // Esperar la confirmación de entrega del mensaje
+      await page.waitForFunction(() => {
+        const messageStatusElement = document.querySelector('.message-outgoing .icon-msg');
+        return messageStatusElement && messageStatusElement.getAttribute('data-icon') === 'msg-time';
+      });
+
+      // Cerrar la página después de que el mensaje se haya entregado
       await page.close();
+
+      
       return { id: response.id.id};
     } catch (e: any) {
       return Promise.resolve({ error: e.message });
