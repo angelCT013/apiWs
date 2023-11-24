@@ -25,9 +25,8 @@ export class LeadCreate {
         // console.log(responseExSave);
         
         if(responseExSave.id){
+          
           resultados.push(phoneNumber);
-          resultados.push(responseExSave.idChats);
-
         }
       })
     );
