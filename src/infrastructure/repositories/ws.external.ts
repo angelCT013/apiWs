@@ -49,19 +49,15 @@ class WsTransporter extends Client implements LeadExternal {
     try {
       if (!this.status) return Promise.resolve({ error: "WAIT_LOGIN" });
       const { message, phone } = lead;
-      await this.sendMessage(`${phone}@c.us`, message).then(async (response)=>{
-        console.log(response);
+      const response = await this.sendMessage(`${phone}@c.us`, message);
+      // if (response.id.id != '') {
+      //   // Cerrar el navegador si response tiene datos
+      //   console.log("entro al if");
+      //   console.log(response);
         
-        if (response.id.id != '') {
-          // Cerrar el navegador si response tiene datos
-          // console.log("entro al if");
-          // console.log(response);
-          
-          await this.closeBrowser();
-        }
-        return { id: response.id.id};
-      });
-
+      //   await this.closeBrowser();
+      // }
+      return { id: response.id.id};
     } catch (e: any) {
       return Promise.resolve({ error: e.message });
     }
