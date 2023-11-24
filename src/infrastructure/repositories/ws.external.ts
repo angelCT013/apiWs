@@ -38,9 +38,7 @@ class WsTransporter extends Client implements LeadExternal {
       console.log("Escanea el codigo QR que esta en la carepta tmp");
       this.generateImage(qr);
     });
-    this.on("message_create", () => {
-      this.closeBrowser(); // Asegúrate de llamar al método para cerrar el navegador
-    });
+
   }
 
   /**
