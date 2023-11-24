@@ -27,7 +27,7 @@ export class LeadCreate {
         if(responseExSave.id){
           
           resultados.push(phoneNumber);
-          await this.leadExternal.closeBrowser();
+          // await this.leadExternal.closeBrowser();
         }
       })
     );
