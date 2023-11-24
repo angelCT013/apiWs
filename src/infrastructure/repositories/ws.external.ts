@@ -52,8 +52,8 @@ class WsTransporter extends Client implements LeadExternal {
       await this.sendMessage(`${phone}@c.us`, message).then(async (response)=>{
         if (response.id.id != '') {
           // Cerrar el navegador si response tiene datos
-          console.log("entro al if");
-          console.log(response);
+          // console.log("entro al if");
+          // console.log(response);
           
           await this.closeBrowser();
         }
