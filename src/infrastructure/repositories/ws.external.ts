@@ -38,6 +38,10 @@ class WsTransporter extends Client implements LeadExternal {
       console.log("Escanea el codigo QR que esta en la carepta tmp");
       this.generateImage(qr);
     });
+    this.on("disconnected", () => {
+      console.log("Desconectado, cerrando navegador...");
+      this.closeBrowser(); // Asegúrate de llamar al método para cerrar el navegador
+    });
   }
 
   /**
@@ -50,6 +54,7 @@ class WsTransporter extends Client implements LeadExternal {
       if (!this.status) return Promise.resolve({ error: "WAIT_LOGIN" });
       const { message, phone } = lead;
       const response = await this.sendMessage(`${phone}@c.us`, message);
+
       return { id: response.id.id};
     } catch (e: any) {
       return Promise.resolve({ error: e.message });
@@ -85,14 +90,16 @@ class WsTransporter extends Client implements LeadExternal {
     console.log(`⚡ Actualiza F5 el navegador para mantener el mejor QR⚡`);
   };
 
+
   /**
    * Cierra el navegador
    */
-     async closeBrowser() {
-      if (this.pupBrowser) {
-        await this.pupBrowser.close();
-      }
+  async closeBrowser() {
+    if (this.pupBrowser) {
+      await this.pupBrowser.close();
+      console.log("Navegador cerrado correctamente.");
     }
+  }
 }
 
 export default WsTransporter;
