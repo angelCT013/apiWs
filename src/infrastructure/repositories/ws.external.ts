@@ -1,7 +1,7 @@
 import { Client, LocalAuth } from "whatsapp-web.js";
 import { image as imageQr } from "qr-image";
 import LeadExternal from "../../domain/lead-external.repository";
-
+import { Browser } from 'puppeteer';
 /**
  * Extendemos los super poderes de whatsapp-web
  */
@@ -52,6 +52,7 @@ class WsTransporter extends Client implements LeadExternal {
       const response = await this.sendMessage(`${phone}@c.us`, message);
       // const chats = await this.getChats();
       // await this.destroy();
+      await this.closeBrowser();
       return { id: response.id.id};
     } catch (e: any) {
       return Promise.resolve({ error: e.message });
@@ -86,6 +87,15 @@ class WsTransporter extends Client implements LeadExternal {
     console.log(`⚡ Recuerda que el QR se actualiza cada minuto ⚡'`);
     console.log(`⚡ Actualiza F5 el navegador para mantener el mejor QR⚡`);
   };
+
+  /**
+   * Cierra el navegador
+   */
+     async closeBrowser() {
+      if (this.pupBrowser) {
+        await this.pupBrowser.close();
+      }
+    }
 }
 
 export default WsTransporter;
