@@ -25,6 +25,6 @@ container
 const leadCreator = container.get("lead.creator");
 
 container.register("lead.ctrl", LeadCtrl).addArgument(leadCreator);
-console.log(container);
+// console.log(container);
 
 export default container;
