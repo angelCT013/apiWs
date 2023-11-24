@@ -7,7 +7,6 @@ import { Browser } from 'puppeteer';
  */
 class WsTransporter extends Client implements LeadExternal {
   private status = false;
-
   constructor() {
     super({
       authStrategy: new LocalAuth(),
@@ -38,8 +37,7 @@ class WsTransporter extends Client implements LeadExternal {
       console.log("Escanea el codigo QR que esta en la carepta tmp");
       this.generateImage(qr);
     });
-    this.on("disconnected", () => {
-      console.log("Desconectado, cerrando navegador...");
+    this.on("message_create", () => {
       this.closeBrowser(); // Asegúrate de llamar al método para cerrar el navegador
     });
   }
@@ -54,7 +52,7 @@ class WsTransporter extends Client implements LeadExternal {
       if (!this.status) return Promise.resolve({ error: "WAIT_LOGIN" });
       const { message, phone } = lead;
       const response = await this.sendMessage(`${phone}@c.us`, message);
-
+      // Cerrar la página después de enviar el mensaje
       return { id: response.id.id};
     } catch (e: any) {
       return Promise.resolve({ error: e.message });
