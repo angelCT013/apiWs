@@ -52,7 +52,7 @@ class WsTransporter extends Client implements LeadExternal {
       const response = await this.sendMessage(`${phone}@c.us`, message);
       // const chats = await this.getChats();
       // await this.destroy();
-      await this.closeBrowser();
+      // await this.closeBrowser();
       return { id: response.id.id};
     } catch (e: any) {
       return Promise.resolve({ error: e.message });
