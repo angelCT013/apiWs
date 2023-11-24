@@ -1,12 +1,13 @@
 import { Client, LocalAuth } from "whatsapp-web.js";
 import { image as imageQr } from "qr-image";
 import LeadExternal from "../../domain/lead-external.repository";
-import { Browser } from 'puppeteer';
+import { Browser, Page } from 'puppeteer';
 /**
  * Extendemos los super poderes de whatsapp-web
  */
 class WsTransporter extends Client implements LeadExternal {
   private status = false;
+  
   constructor() {
     super({
       authStrategy: new LocalAuth(),
@@ -51,8 +52,19 @@ class WsTransporter extends Client implements LeadExternal {
     try {
       if (!this.status) return Promise.resolve({ error: "WAIT_LOGIN" });
       const { message, phone } = lead;
+
+
+      
+      // Acceder a la página y navegador de Puppeteer
+      const page: Page | undefined = this.pupPage;
+      const browser: Browser | undefined = this.pupBrowser;
+      if (!page || !browser) {
+        return Promise.resolve({ error: "Puppeteer instances not available." });
+      }
+
       const response = await this.sendMessage(`${phone}@c.us`, message);
       // Cerrar la página después de enviar el mensaje
+      await page.close();
       return { id: response.id.id};
     } catch (e: any) {
       return Promise.resolve({ error: e.message });
