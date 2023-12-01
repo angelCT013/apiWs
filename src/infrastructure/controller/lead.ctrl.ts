@@ -8,7 +8,9 @@ class LeadCtrl {
     const { message, phone } = body;
 
     const response = await this.leadCreator.sendMessageAndSave({ message, phone })
-    res.send(response);
+    let resp=res.send(response);
+    console.log(resp);
+    
   };
 }
 
