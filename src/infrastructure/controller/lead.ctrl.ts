@@ -10,10 +10,7 @@ class LeadCtrl {
 
     const response = await this.leadCreator.sendMessageAndSave({ message, phone })
    let resp= res.send(response);
-    if(resp){
-      await this.leadCreator.closeLastPage();
-
-    }
+    
   };
 }
 

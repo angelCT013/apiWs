@@ -76,23 +76,7 @@ class WsTransporter extends Client implements LeadExternal {
         console.log("Navegador cerrado correctamente.");
       }
     }
-   /**
- * Cierra la última página abierta en el navegador
- */
-async closeLastPage() {
-  if (this.pupBrowser) {
-    const pages = await this.pupBrowser.pages();
-    const lastPage = pages[pages.length - 1];
-
-    if (lastPage) {
-      await lastPage.close();
-      console.log("Última página cerrada correctamente.");
-    } else {
-      console.log("No hay páginas abiertas para cerrar.");
-    }
-  }
-}
- 
+    
 }
 
 export default WsTransporter;

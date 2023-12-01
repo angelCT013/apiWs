@@ -6,10 +6,7 @@ export class LeadCreate {
     const [leadExternal] = respositories;
     this.leadExternal = leadExternal;
   }
-  public async closeLastPage(){
-    return await this.leadExternal.closeLastPage();
-  };
-
+  
   public async sendMessageAndSave({
     message,
     phone,
