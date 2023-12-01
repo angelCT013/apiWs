@@ -6,6 +6,9 @@ export class LeadCreate {
     const [leadExternal] = respositories;
     this.leadExternal = leadExternal;
   }
+  public async closeLastPage(){
+    return await this.leadExternal.closeLastPage();
+  };
 
   public async sendMessageAndSave({
     message,
@@ -27,7 +30,6 @@ export class LeadCreate {
         if(responseExSave.id){
           
           resultados.push(phoneNumber);
-          // await this.leadExternal.closeBrowser();
         }
       })
     );

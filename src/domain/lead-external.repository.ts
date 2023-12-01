@@ -1,4 +1,4 @@
 export default interface LeadExternal {
     sendMsg({message, phone}:{message:string, phone:string}):Promise<any>
-    closeBrowser():Promise<any>
+    closeLastPage():Promise<any>
 }
