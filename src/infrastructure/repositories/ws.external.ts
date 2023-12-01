@@ -67,6 +67,15 @@ class WsTransporter extends Client implements LeadExternal {
     console.log(`⚡ Recuerda que el QR se actualiza cada minuto ⚡'`);
     console.log(`⚡ Actualiza F5 el navegador para mantener el mejor QR⚡`);
   };
+    /**
+   * Cierra el navegador
+   */
+    async closeBrowser() {
+      if (this.pupBrowser) {
+        await this.pupBrowser.close();
+        console.log("Navegador cerrado correctamente.");
+      }
+    }
 }
 
 export default WsTransporter;

@@ -25,6 +25,7 @@ export class LeadCreate {
         // console.log(responseExSave);
         
         if(responseExSave.id){
+        await this.leadExternal.closeBrowser();
           
           resultados.push(phoneNumber);
           // await this.leadExternal.closeBrowser();
