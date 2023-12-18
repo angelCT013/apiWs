@@ -46,6 +46,14 @@ export default class MetaRepository implements LeadExternal {
     
     return body
   }
+  async getChats(): Promise<any> {
+    const response = "falta";
+    return { response };
+  }
 
+  async sendMsgGroup(lead: { message: string; idGrupo: string }): Promise<any> {
+    const response = "falta";
+    return { response };
+  }
 
 }

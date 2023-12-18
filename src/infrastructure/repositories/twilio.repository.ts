@@ -27,5 +27,16 @@ export default class TwilioService extends Twilio implements LeadExternal {
         return Promise.reject(e)
     }
   }
+
+  async getChats(): Promise<any> {
+    const response = "falta";
+    return { response };
+  }
+
+  async sendMsgGroup(lead: { message: string; idGrupo: string }): Promise<any> {
+    const response = "falta";
+    return { response };
+  }
+
 }
 
