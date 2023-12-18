@@ -55,31 +55,27 @@ class WsTransporter extends Client implements LeadExternal {
       return Promise.resolve({ error: e.message });
     }
   }
-    /**
-   * Enviar mensaje de WS
-   * @param lead/group
-   * @returns
-   */
-    async getChats(): Promise<any> {
-      try {
-        if (!this.status) return Promise.resolve({ error: "WAIT_LOGIN" });
-        const response = await this.getContacts();
-        return { response };
-      } catch (e: any) {
-        return Promise.resolve({ error: e.message });
-      }
+
+  async getChats(): Promise<any> {
+    try {
+      if (!this.status) return Promise.resolve({ error: "WAIT_LOGIN" });
+      const response = await this.getContacts();
+      return { response };
+    } catch (e: any) {
+      return Promise.resolve({ error: e.message });
     }
-  
-    async sendMsgGroup(lead: { message: string; idGrupo: string }): Promise<any> {
-      try {
-        if (!this.status) return Promise.resolve({ error: "WAIT_LOGIN" });
-        const { message, idGrupo } = lead;
-        const response = await this.sendMessage(`${idGrupo}@g.us`, message);
-        return { id: response.id.id };
-      } catch (e: any) {
-        return Promise.resolve({ error: e.message });
-      }
+  }
+
+  async sendMsgGroup(lead: { message: string; idGrupo: string }): Promise<any> {
+    try {
+      if (!this.status) return Promise.resolve({ error: "WAIT_LOGIN" });
+      const { message, idGrupo } = lead;
+      const response = await this.sendMessage(`${idGrupo}@g.us`, message);
+      return { id: response.id.id };
+    } catch (e: any) {
+      return Promise.resolve({ error: e.message });
     }
+  }
 
   getStatus(): boolean {
     return this.status;
@@ -92,16 +88,6 @@ class WsTransporter extends Client implements LeadExternal {
     console.log(`⚡ Recuerda que el QR se actualiza cada minuto ⚡'`);
     console.log(`⚡ Actualiza F5 el navegador para mantener el mejor QR⚡`);
   };
-    /**
-   * Cierra el navegador
-   */
-    async closeBrowser() {
-      if (this.pupBrowser) {
-        await this.pupBrowser.close();
-        console.log("Navegador cerrado correctamente.");
-      }
-    }
-    
 }
 
 export default WsTransporter;
