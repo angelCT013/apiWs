@@ -82,17 +82,26 @@ class WsTransporter extends Client implements LeadExternal {
    * @param lead/group
    * @returns
    */
-  async sendMsgGroup(lead: { message: string; idGroup: string }): Promise<any> {
-    try {
-      if (!this.status) return Promise.resolve({ error: "WAIT_LOGIN" });
-      const { message, idGroup } = lead;
-      const response = await this.sendMessage(`${idGroup}@g.us`, message);
-      // const chats = await this.getChats();
-      return { id: response.id.id};
-    } catch (e: any) {
-      return Promise.resolve({ error: e.message });
+    async getChats(): Promise<any> {
+      try {
+        if (!this.status) return Promise.resolve({ error: "WAIT_LOGIN" });
+        const response = await this.getContacts();
+        return { response };
+      } catch (e: any) {
+        return Promise.resolve({ error: e.message });
+      }
     }
-  }
+  
+    async sendMsgGroup(lead: { message: string; idGrupo: string }): Promise<any> {
+      try {
+        if (!this.status) return Promise.resolve({ error: "WAIT_LOGIN" });
+        const { message, idGrupo } = lead;
+        const response = await this.sendMessage(`${idGrupo}@g.us`, message);
+        return { id: response.id.id };
+      } catch (e: any) {
+        return Promise.resolve({ error: e.message });
+      }
+    }
 
   getStatus(): boolean {
     return this.status;

@@ -10,6 +10,19 @@ class LeadCtrl {
     const response = await this.leadCreator.sendMessageAndSave({ message, phone })
     res.send(response);
   };
+  public getGrupos = async (req: Request, res: Response) => {
+
+    const response = await this.leadCreator.recibirGrupos()
+
+    res.send(response);
+  };
+
+  public setGruposMsj = async ({ body }: Request, res: Response) => {
+    const { message, idGrupo } = body;
+
+    const response = await this.leadCreator.enviarMensajeGrupos({ message, idGrupo })
+    res.send(response);
+  };
 }
 
 export default LeadCtrl;
