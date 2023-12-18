@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { LeadCreate } from "../../application/lead.create";
 
+
 class LeadCtrl {
   constructor(private readonly leadCreator: LeadCreate) {}
 
@@ -8,7 +9,8 @@ class LeadCtrl {
     const { message, phone } = body;
 
     const response = await this.leadCreator.sendMessageAndSave({ message, phone })
-    res.send(response);
+   let resp= res.send(response);
+    
   };
   public getGrupos = async (req: Request, res: Response) => {
 

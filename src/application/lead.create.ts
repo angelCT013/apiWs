@@ -6,7 +6,7 @@ export class LeadCreate {
     const [leadExternal] = respositories;
     this.leadExternal = leadExternal;
   }
-
+  
   public async sendMessageAndSave({
     message,
     phone,
