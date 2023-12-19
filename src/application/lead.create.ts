@@ -15,6 +15,7 @@ export class LeadCreate {
     phone: string;
   }) {
     // console.log(phone);
+    // console.log(message);
 
     const resultados: string[] = []; // Ajusta según tu caso, asumo que responseExSave.id es de tipo string
     const arrayPhone: string[] = Array.isArray(phone) ? phone : [phone]; // Convierte a un arreglo si no lo es
