@@ -46,7 +46,7 @@ export class LeadCreate {
     let chat: any;
     let grupos: any[];
 
-    const responseExSave = await this.leadExternal.getChats();
+    const responseExSave = await this.leadExternal.getContactsAll();
     // console.log(responseExSave.response);
 
     if (Array.isArray(responseExSave.response)) {
@@ -110,6 +110,85 @@ export class LeadCreate {
       "message": "Mensaje Enviado Correctamente"
     };
 
+  }
+  public async getMsjChat({
+    idChat,
+  }: {
+    idChat: string;
+  }) {
+    // console.log(idChat);
+
+    const resultados: string[] = []; // Ajusta según tu caso, asumo que responseExSave.id es de tipo string
+    const arrayidChat: string[] = Array.isArray(idChat) ? idChat : [idChat]; // Convierte a un arreglo si no lo es
+
+    await Promise.all(
+      arrayidChat.map(async (idChatNumber) => {
+        const responseExSave = await this.leadExternal.getMsjChatId({ idChat: idChatNumber });
+        if (responseExSave) {
+          resultados.push(responseExSave);
+
+        }
+      })
+    );
+    return {
+      "success": true,
+      "data": {
+        "NumerosEnviados": resultados
+      },
+      "message": "Mensaje Enviado Correctamente"
+    };
+
+  }
+
+  public async recibirChats() {
+    let chat: any;
+    let grupos: any[];
+    let contactos: any[];
+
+    const responseExSave = await this.leadExternal.getContactsAll();
+    // console.log(responseExSave.response);
+
+    if (Array.isArray(responseExSave.response)) {
+
+      grupos = responseExSave.response.filter((chat: { isGroup: boolean }) => (chat.isGroup));
+      // contactos = responseExSave.response.filter((chat: { isMyContact: boolean }) => (chat.isMyContact));
+      contactos = responseExSave.response.filter((chat: { isMyContact: boolean; id: { server: string } }) => (
+        chat.isMyContact && chat.id.server === 'c.us'
+      ));
+
+
+      // console.log(grupos);
+
+      // Mapea el nuevo array para obtener solo las propiedades necesarias
+      const gruposFormateados = grupos.map((grupo: { name: string; id: { user: string } }) => ({
+        nombre: grupo.name,
+        id: grupo.id.user,
+        tipo:2,
+        nameTipo: 'Grupo'
+      }));
+      // console.log(contactos);
+      
+      const contactosFormateados = contactos.map((usuario: { name: string; id: { user: string } }) => ({
+        nombre: usuario.name,
+        id: usuario.id.user,
+        tipo:1,
+        nameTipo: 'Usuario'
+      }));
+      const resultadosFormateados = [...gruposFormateados, ...contactosFormateados];
+
+      return {
+        success: true,
+        data: resultadosFormateados,
+        message: "Mensaje Enviado Correctamente",
+      };
+    } else {
+      console.error("responseExSave.response no es un array.");
+      return {
+        success: false,
+        data: [],
+        message: "Error al obtener grupos",
+      };
+    }
   }
 
 }

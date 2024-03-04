@@ -26,6 +26,21 @@ class LeadCtrl {
     const response = await this.leadCreator.enviarMensajeGrupos({ message, idGrupo })
     res.send(response);
   };
+
+  public getChatId = async ({ body }: Request, res: Response) => {
+    const { idChat } = body;
+    console.log(idChat);
+    
+    const response = await this.leadCreator.getMsjChat({ idChat })
+    res.send(response);
+  };
+  public getContactos = async (req: Request, res: Response) => {
+    
+    const response = await this.leadCreator.recibirChats()
+
+    res.send(response);
+  };
+
 }
 
 export default LeadCtrl;

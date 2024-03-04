@@ -13,4 +13,11 @@ router.get("/grupos", leadCtrl.getGrupos);
 //Funcion para enviar msj a varios grupos
 router.post("/grupos/enviarMsj", leadCtrl.setGruposMsj);
 
+//Funcion para ver el chat
+router.post("/chats/viewChat", leadCtrl.getChatId);
+
+//Funcion para obtener contactos
+router.get("/contactos", leadCtrl.getContactos);
+
+
 export { router };
