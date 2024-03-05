@@ -87,7 +87,6 @@ class WsTransporter extends Client implements LeadExternal {
           // console.log(msg);
           this.downloadMediaWS(msg,messageToSend);
         }
-        console.log(msg);
 
       }
   /**
