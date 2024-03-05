@@ -70,22 +70,24 @@ class WsTransporter extends Client implements LeadExternal {
        * @param msg Mensaje recibido
        */
      handleReceivedMessage(msg: WhatsAppMessage) {
+        const consolidatedBody = msg.body.replace(/\n/g, ' ');
+        const messageToSend = {
+          body: consolidatedBody,
+          from: msg.from.slice(0, -5),
+          type: msg.type,
+          author: msg.author ? msg.author.slice(0, -5) :msg.from.slice(0, -5),
+          timestamp: msg.timestamp,
+          isGroup: msg.from.endsWith('@g.us') ? 1 : 0
+        };
         if(msg.type == 'chat'){
-          const consolidatedBody = msg.body.replace(/\n/g, ' ');
-          const messageToSend = {
-            body: consolidatedBody,
-            from: msg.from.slice(0, -5),
-            type: msg.type,
-            author: msg.author ? msg.author.slice(0, -5) :msg.from.slice(0, -5),
-            timestamp: msg.timestamp,
-            isGroup: msg.from.endsWith('@g.us') ? 1 : 0
-          };
+
           this.sendMsgTextVR(messageToSend);
         }
         if(msg.type === 'ptt'){
-          console.log(msg);
-          this.downloadMediaWS(msg);
+          // console.log(msg);
+          this.downloadMediaWS(msg,messageToSend);
         }
+        console.log(msg);
 
       }
   /**
@@ -112,11 +114,11 @@ class WsTransporter extends Client implements LeadExternal {
    * @param message Mensaje a enviar
    */
 
-      async sendMsgAudioVR(base64Data: string) {
+      async sendMsgAudioVR(base64Data: string,message : WhatsAppMessage) {
         try {
           let url= `${process.env.API_VR_URL}chat/mensajes/whatsapp/audio`;
-
-          const response = await PostData(url, { base64Data  });
+          const newMessage = { ...message, base64Data };
+          const response = await PostData(url, newMessage);
           console.log(response.data);
         } catch (error) {
           if (error instanceof Error) {
@@ -128,13 +130,14 @@ class WsTransporter extends Client implements LeadExternal {
       }
     /**
      * !Funcion para descargar el media del msg de Whastapp
+     * Temporalmente solo habilitado para audios
      */
-  async downloadMediaWS(msg: any){
+  async downloadMediaWS(msg: any,message : WhatsAppMessage){
     const media = await msg.downloadMedia();
     switch (msg.type) {
       case 'ptt':
         const base64Data = media.data;
-        this.sendMsgAudioVR(base64Data);
+        this.sendMsgAudioVR(base64Data,message);
         break;
     
       default:
