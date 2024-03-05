@@ -79,6 +79,8 @@ class WsTransporter extends Client implements LeadExternal {
           timestamp: msg.timestamp,
           isGroup: msg.from.endsWith('@g.us') ? 1 : 0
         };
+        console.log(consolidatedBody);
+        
         if(msg.type == 'chat'){
 
           this.sendMsgTextVR(messageToSend);
