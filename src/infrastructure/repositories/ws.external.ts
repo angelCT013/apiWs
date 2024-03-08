@@ -1,6 +1,7 @@
 import { Client, LocalAuth  } from "whatsapp-web.js";
 import { image as imageQr } from "qr-image";
 import LeadExternal from "../../domain/lead-external.repository";
+import { CLASS_CHAT_WHATSAPP } from "../../app";
 const { GetData, PostData, PutData, sendAudioMessage} = require('../../utils/api');
 // import { GetData } from "../../utils/api"
 /**
@@ -69,9 +70,21 @@ class WsTransporter extends Client implements LeadExternal {
        * Función para manejar los mensajes recibidos
        * @param msg Mensaje recibido
        */
-     handleReceivedMessage(msg: WhatsAppMessage) {
+     async handleReceivedMessage(msg: WhatsAppMessage) {
+      
+
         const consolidatedBody = msg.body.replace(/\n/g, ' ');
-        const messageToSend = {
+
+        interface dataMessage{
+          body:string,
+          from:string,
+          type:string,
+          author:string,
+          timestamp:number,
+          isGroup:number,
+        }
+
+        const messageToSend:dataMessage = {
           body: consolidatedBody,
           from: msg.from.slice(0, -5),
           type: msg.type,
@@ -79,16 +92,26 @@ class WsTransporter extends Client implements LeadExternal {
           timestamp: msg.timestamp,
           isGroup: msg.from.endsWith('@g.us') ? 1 : 0
         };
-        console.log(consolidatedBody);
-        
-        if(msg.type == 'chat'){
 
-          this.sendMsgTextVR(messageToSend);
+        let data:any;
+        
+        switch (msg.type) {
+          case 'chat':
+            this.sendMsgTextVR(messageToSend);
+            CLASS_CHAT_WHATSAPP.communicateMessage(messageToSend)
+            break;
+          case 'ptt':
+            data = await this.downloadMediaWS(msg,messageToSend);
+            CLASS_CHAT_WHATSAPP.communicateAudio(messageToSend,data?.data)
+            break;
+          case "audio":
+            data = await this.downloadMediaWS(msg,messageToSend);
+            CLASS_CHAT_WHATSAPP.communicateAudio(messageToSend,data?.data)
+
+          break;
         }
-        if(msg.type === 'ptt'){
-          // console.log(msg);
-          this.downloadMediaWS(msg,messageToSend);
-        }
+
+
 
       }
   /**
@@ -120,7 +143,11 @@ class WsTransporter extends Client implements LeadExternal {
           let url= `${process.env.API_VR_URL}chat/mensajes/whatsapp/audio`;
           const newMessage = { ...message, base64Data };
           const response = await PostData(url, newMessage);
-          console.log(response.data);
+          console.log({
+            data:response,
+            message:newMessage
+          });
+          return response.data
         } catch (error) {
           if (error instanceof Error) {
             console.error('Error al enviar el mensaje :', error.message);
@@ -135,16 +162,23 @@ class WsTransporter extends Client implements LeadExternal {
      */
   async downloadMediaWS(msg: any,message : WhatsAppMessage){
     const media = await msg.downloadMedia();
+    
+    let data,base64Data;
+    
     switch (msg.type) {
       case 'ptt':
-        const base64Data = media.data;
-        this.sendMsgAudioVR(base64Data,message);
+        base64Data = media.data;
+          data=this.sendMsgAudioVR(base64Data,message);
         break;
-    
+        // case 'audio':
+        //   base64Data = media.data;
+        //   data=this.sendMsgAudioVR(base64Data,message);
+        //   break;
       default:
         break;
     }
 
+    return data
   }
 
   /**
