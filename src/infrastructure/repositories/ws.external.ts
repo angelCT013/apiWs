@@ -1,8 +1,8 @@
-import { Client, LocalAuth  } from "whatsapp-web.js";
+import { Client, LocalAuth, MessageMedia, MessageSendOptions   } from "whatsapp-web.js";
 import { image as imageQr } from "qr-image";
 import LeadExternal from "../../domain/lead-external.repository";
 import { CLASS_CHAT_WHATSAPP } from "../../app";
-const { GetData, PostData, PutData, sendAudioMessage} = require('../../utils/api');
+const { GetData, PostData, PutData} = require('../../utils/api');
 // import { GetData } from "../../utils/api"
 /**
  * Extendemos los super poderes de whatsapp-web
@@ -227,6 +227,28 @@ class WsTransporter extends Client implements LeadExternal {
       console.log(response);
       
       return { response };
+    } catch (e: any) {
+      return Promise.resolve({ error: e.message });
+    }
+  }
+  async sendAudioMessage(lead: { audioData: string; phone: string }): Promise<any> {
+    try {
+      if (!this.status) return Promise.resolve({ error: "ERROR AL MANDAR AUDIO (WHATSAPP)" });
+  
+      const { audioData, phone } = lead;
+  
+      // Crear una instancia de MessageMedia con el contenido de audio PTT
+      const audioMedia = new MessageMedia('audio/ogg; codecs=opus', audioData, 'audio.ogg');
+  
+      const options: MessageSendOptions = {
+        linkPreview: false, 
+        sendAudioAsVoice: true 
+      };
+  
+      // Enviar el mensaje con el contenido de audio adjunto
+      const response = await this.sendMessage(`${phone}`, audioMedia, options);
+  
+      return { id: response.id.id };
     } catch (e: any) {
       return Promise.resolve({ error: e.message });
     }

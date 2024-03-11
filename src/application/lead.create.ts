@@ -156,10 +156,6 @@ export class LeadCreate {
         chat.isMyContact && chat.id.server === 'c.us'
       ));
 
-
-      // console.log(grupos);
-
-      // Mapea el nuevo array para obtener solo las propiedades necesarias
       const gruposFormateados = grupos.map((grupo: { name: string; id: { user: string } }) => ({
         nombre: grupo.name,
         id: grupo.id.user,
@@ -189,6 +185,39 @@ export class LeadCreate {
         message: "Error al obtener grupos",
       };
     }
+  }
+  public async enviarAudiosMsj({
+    audioData,
+    idPhone,
+    isGroup,
+  }: {
+    audioData: string;
+    idPhone: string;
+    isGroup:boolean;
+  }) {
+    // console.log(idPhone);
+
+    const resultados: string[] = []; // Ajusta según tu caso, asumo que responseExSave.id es de tipo string
+    const arrayidPhone: string[] = Array.isArray(idPhone) ? idPhone : [idPhone]; // Convierte a un arreglo si no lo es
+    const tipo = isGroup ? '@g.us':'@c.us';
+    await Promise.all(
+      arrayidPhone.map(async (idNumber) => {
+        let idSend = idNumber+tipo;
+        const responseExSave = await this.leadExternal.sendAudioMessage({ audioData, phone: idSend });
+        if (responseExSave.id) {
+          resultados.push(idNumber);
+
+        }
+      })
+    );
+    return {
+      "success": true,
+      "data": {
+        "NumerosEnviados": resultados
+      },
+      "message": "Mensaje Enviado Correctamente"
+    };
+
   }
 
 }

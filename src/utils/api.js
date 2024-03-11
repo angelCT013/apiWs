@@ -37,28 +37,10 @@ const PostData = async (url, data) => {
     .catch(response => response);
 };
 
-const sendAudioMessage = async (url,audio ) => {
-    try {
 
-      const response = await axios.post(url, audio, {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-  
-      console.log(response.data);
-    } catch (error) {
-      if (error instanceof Error) {
-        console.error('Error al enviar el mensaje:', error.message);
-      } else {
-        console.error('Error desconocido al enviar el mensaje');
-      }
-    }
-  };
 
 module.exports = {
   GetData,
   PostData,
   PutData,
-  sendAudioMessage,
 };

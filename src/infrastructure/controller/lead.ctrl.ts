@@ -41,6 +41,13 @@ class LeadCtrl {
     res.send(response);
   };
 
+  public setAudioMsj = async ({ body }: Request, res: Response) => {
+    const { audioData, idPhone, isGroup } = body;
+
+    const response = await this.leadCreator.enviarAudiosMsj({ audioData, idPhone, isGroup })
+    res.send(response);
+  };
+
 }
 
 export default LeadCtrl;

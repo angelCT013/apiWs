@@ -8,16 +8,20 @@ const router: Router = Router();
  */
 const leadCtrl: LeadCtrl = container.get("lead.ctrl");
 router.post("/", leadCtrl.sendCtrl);
-//Funcion para obtener los grupos
+//Api para obtener los grupos
 router.get("/grupos", leadCtrl.getGrupos);
-//Funcion para enviar msj a varios grupos
+//Api para enviar msj a varios grupos
 router.post("/grupos/enviarMsj", leadCtrl.setGruposMsj);
 
-//Funcion para ver el chat
+//Api para ver el chat
 router.post("/chats/viewChat", leadCtrl.getChatId);
 
-//Funcion para obtener contactos
+//Api para obtener contactos
 router.get("/contactos", leadCtrl.getContactos);
+
+//Api para enviar audios
+router.post("/envio/multimedia/audio", leadCtrl.setAudioMsj);
+
 
 
 export { router };

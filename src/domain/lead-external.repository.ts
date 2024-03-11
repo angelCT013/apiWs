@@ -3,4 +3,6 @@ export default interface LeadExternal {
     getContactsAll():Promise<any>
     sendMsgGroup({message, idGrupo}:{message:string, idGrupo:string}):Promise<any>
     getMsjChatId({idChat}:{idChat:string}):Promise<any>
+    sendAudioMessage({audioData, phone}:{audioData:string, phone:string}):Promise<any>
+
 }
