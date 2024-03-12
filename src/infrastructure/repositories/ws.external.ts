@@ -239,7 +239,8 @@ class WsTransporter extends Client implements LeadExternal {
   
       // Crear una instancia de MessageMedia con el contenido de audio PTT
       const audioMedia = new MessageMedia('audio/ogg; codecs=opus', audioData, 'audio.ogg');
-  
+      console.log(audioMedia);
+      
       const options: MessageSendOptions = {
         linkPreview: false, 
         sendAudioAsVoice: true 
@@ -247,7 +248,8 @@ class WsTransporter extends Client implements LeadExternal {
   
       // Enviar el mensaje con el contenido de audio adjunto
       const response = await this.sendMessage(`${phone}`, audioMedia, options);
-  
+      console.log(response);
+      
       return { id: response.id.id };
     } catch (e: any) {
       return Promise.resolve({ error: e.message });
