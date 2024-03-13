@@ -22,6 +22,9 @@ router.get("/contactos", leadCtrl.getContactos);
 //Api para enviar audios
 router.post("/envio/multimedia/audio", leadCtrl.setAudioMsj);
 
+//Api para enviar archivos
+router.post("/envio/multimedia/file", leadCtrl.setFileMsj);
+
 
 
 export { router };

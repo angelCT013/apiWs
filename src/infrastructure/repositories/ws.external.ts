@@ -21,7 +21,6 @@ interface WhatsAppMessage {
 }
 class WsTransporter extends Client implements LeadExternal {
   private status = false;
-
   constructor() {
     super({
       authStrategy: new LocalAuth(),
@@ -32,6 +31,10 @@ class WsTransporter extends Client implements LeadExternal {
           "--unhandled-rejections=strict",
         ],
       },
+      webVersionCache: {
+        type: 'remote',
+        remotePath: `https://raw.githubusercontent.com/wppconnect-team/wa-version/main/html/2.2407.3.html`,
+    },
     });
 
     console.log("Iniciando....");
@@ -54,12 +57,18 @@ class WsTransporter extends Client implements LeadExternal {
       
     });
 
-    this.on('media_uploaded', media => {
-      console.log("entro a media");
+    this.on('unread_count', unread => {
       
-      console.log(media);
+      console.log(unread);
       
     });
+
+    // this.on('media_uploaded', media => {
+    //   console.log("entro a media");
+      
+    //   // console.log(media);
+      
+    // });
     this.on("qr", (qr) => {
       console.log("Escanea el codigo QR que esta en la carepta tmp");
       this.generateImage(qr);
@@ -92,7 +101,9 @@ class WsTransporter extends Client implements LeadExternal {
           timestamp: msg.timestamp,
           isGroup: msg.from.endsWith('@g.us') ? 1 : 0
         };
-
+        // console.log(messageToSend);
+        // console.log(msg);
+        
         let data:any;
         
         switch (msg.type) {
@@ -108,6 +119,14 @@ class WsTransporter extends Client implements LeadExternal {
             data = await this.downloadMediaWS(msg,messageToSend);
             CLASS_CHAT_WHATSAPP.communicateAudio(messageToSend,data?.data)
 
+          break;
+          case "image":
+            data = await this.downloadMediaWS(msg,messageToSend);
+            CLASS_CHAT_WHATSAPP.communicateAudio(messageToSend,data?.data)
+          break;
+          case "document":
+            data = await this.downloadMediaWS(msg,messageToSend);
+            CLASS_CHAT_WHATSAPP.communicateAudio(messageToSend,data?.data)
           break;
         }
 
@@ -134,14 +153,14 @@ class WsTransporter extends Client implements LeadExternal {
         }
       }
     /**
-   * Enviar mensaje recibidos de Whatsapp
+   * Enviar mensaje de audio recibidos de Whatsapp
    * @param message Mensaje a enviar
    */
 
-      async sendMsgAudioVR(base64Data: string,message : WhatsAppMessage) {
+      async sendFilesVR(base64Data: string,message : WhatsAppMessage,mimetype: string) {
         try {
-          let url= `${process.env.API_VR_URL}chat/mensajes/whatsapp/audio`;
-          const newMessage = { ...message, base64Data };
+          let url= `${process.env.API_VR_URL}chat/mensajes/whatsapp/files`;
+          const newMessage = { ...message, base64Data,mimetype };
           const response = await PostData(url, newMessage);
           console.log({
             data:response,
@@ -156,6 +175,7 @@ class WsTransporter extends Client implements LeadExternal {
           }
         }
       }
+
     /**
      * !Funcion para descargar el media del msg de Whastapp
      * Temporalmente solo habilitado para audios
@@ -163,17 +183,32 @@ class WsTransporter extends Client implements LeadExternal {
   async downloadMediaWS(msg: any,message : WhatsAppMessage){
     const media = await msg.downloadMedia();
     
-    let data,base64Data;
+    let data,base64Data, mimetype;
     
     switch (msg.type) {
       case 'ptt':
         base64Data = media.data;
-          data=this.sendMsgAudioVR(base64Data,message);
+        mimetype = media.mimetype;
+          data=this.sendFilesVR(base64Data,message,mimetype);
         break;
         // case 'audio':
         //   base64Data = media.data;
-        //   data=this.sendMsgAudioVR(base64Data,message);
+        //   data=this.sendFilesVR(base64Data,message);
         //   break;
+        case 'image':
+          console.log(media);
+          
+          base64Data = media.data;
+          mimetype = media.mimetype;
+            data=this.sendFilesVR(base64Data,message,mimetype);
+          break;
+          case 'document':
+            console.log(media);
+            
+            base64Data = media.data;
+            mimetype = media.mimetype;
+              data=this.sendFilesVR(base64Data,message,mimetype);
+            break;
       default:
         break;
     }
@@ -224,7 +259,7 @@ class WsTransporter extends Client implements LeadExternal {
       if (!this.status) return Promise.resolve({ error: "WAIT_LOGIN" });
       const { idChat } = lead;
       const response = await this.getChatById(`${idChat}@g.us`);
-      console.log(response);
+      // console.log(response);
       
       return { response };
     } catch (e: any) {
@@ -239,16 +274,47 @@ class WsTransporter extends Client implements LeadExternal {
   
       // Crear una instancia de MessageMedia con el contenido de audio PTT
       const audioMedia = new MessageMedia('audio/ogg; codecs=opus', audioData, 'audio.ogg');
-      console.log(audioMedia);
+      // console.log(audioMedia);
       
       const options: MessageSendOptions = {
         linkPreview: false, 
         sendAudioAsVoice: true 
       };
-  
+      // console.log(phone);
+      // console.log(options);
+      
       // Enviar el mensaje con el contenido de audio adjunto
       const response = await this.sendMessage(`${phone}`, audioMedia, options);
-      console.log(response);
+      // console.log(response);
+      
+      return { id: response.id.id };
+    } catch (e: any) {
+      return Promise.resolve({ error: e.message });
+    }
+  }
+
+  async sendFileMessage(lead: { fileData: string; phone: string; tipo: string; nombreArchivo: string; isDocument:boolean }): Promise<any> {
+    try {
+      if (!this.status) return Promise.resolve({ error: "ERROR AL MANDAR ARCHIVO (WHATSAPP)" });
+  
+      const { fileData, phone,tipo, nombreArchivo,isDocument } = lead;
+  
+      const dataMedia = new MessageMedia(tipo, fileData, nombreArchivo);
+      // console.log(dataMedia);
+      
+      const options: MessageSendOptions = {
+        linkPreview: true
+      };
+         // Verificar si el archivo es un documento
+      if (isDocument) {
+          options.sendMediaAsDocument = true;
+      }
+      
+      
+
+      // Enviar el mensaje con el contenido de audio adjunto
+      const response = await this.sendMessage(`${phone}`, dataMedia, options);
+      // console.log(response);
       
       return { id: response.id.id };
     } catch (e: any) {

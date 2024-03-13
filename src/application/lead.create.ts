@@ -17,8 +17,8 @@ export class LeadCreate {
     // console.log(phone);
     // console.log(message);
 
-    const resultados: string[] = []; // Ajusta según tu caso, asumo que responseExSave.id es de tipo string
-    const arrayPhone: string[] = Array.isArray(phone) ? phone : [phone]; // Convierte a un arreglo si no lo es
+    const resultados: string[] = []; 
+    const arrayPhone: string[] = Array.isArray(phone) ? phone : [phone]; 
 
     await Promise.all(
       arrayPhone.map(async (phoneNumber) => {
@@ -90,8 +90,8 @@ export class LeadCreate {
   }) {
     // console.log(idGrupo);
 
-    const resultados: string[] = []; // Ajusta según tu caso, asumo que responseExSave.id es de tipo string
-    const arrayidGrupo: string[] = Array.isArray(idGrupo) ? idGrupo : [idGrupo]; // Convierte a un arreglo si no lo es
+    const resultados: string[] = []; 
+    const arrayidGrupo: string[] = Array.isArray(idGrupo) ? idGrupo : [idGrupo]; 
 
     await Promise.all(
       arrayidGrupo.map(async (idGrupoNumber) => {
@@ -118,8 +118,8 @@ export class LeadCreate {
   }) {
     // console.log(idChat);
 
-    const resultados: string[] = []; // Ajusta según tu caso, asumo que responseExSave.id es de tipo string
-    const arrayidChat: string[] = Array.isArray(idChat) ? idChat : [idChat]; // Convierte a un arreglo si no lo es
+    const resultados: string[] = []; 
+    const arrayidChat: string[] = Array.isArray(idChat) ? idChat : [idChat]; 
 
     await Promise.all(
       arrayidChat.map(async (idChatNumber) => {
@@ -197,13 +197,52 @@ export class LeadCreate {
   }) {
     // console.log(idPhone);
 
-    const resultados: string[] = []; // Ajusta según tu caso, asumo que responseExSave.id es de tipo string
-    const arrayidPhone: string[] = Array.isArray(idPhone) ? idPhone : [idPhone]; // Convierte a un arreglo si no lo es
+    const resultados: string[] = []; 
+    const arrayidPhone: string[] = Array.isArray(idPhone) ? idPhone : [idPhone]; 
     const tipo = isGroup ? '@g.us':'@c.us';
     await Promise.all(
       arrayidPhone.map(async (idNumber) => {
         let idSend = idNumber+tipo;
         const responseExSave = await this.leadExternal.sendAudioMessage({ audioData, phone: idSend });
+        if (responseExSave.id) {
+          resultados.push(idNumber);
+
+        }
+      })
+    );
+    return {
+      "success": true,
+      "data": {
+        "NumerosEnviados": resultados
+      },
+      "message": "Mensaje Enviado Correctamente"
+    };
+
+  }
+  public async enviarArchivosMsj({
+    fileData,
+    idPhone,
+    isGroup,
+    tipo,
+    nombreArchivo,
+    isDocument
+  }: {
+    fileData: string;
+    idPhone: string;
+    isGroup:boolean;
+    tipo:string;
+    nombreArchivo:string;
+    isDocument:boolean;
+  }) {
+    // console.log(idPhone);
+
+    const resultados: string[] = []; 
+    const arrayidPhone: string[] = Array.isArray(idPhone) ? idPhone : [idPhone]; 
+    const tipoSend = isGroup ? '@g.us':'@c.us';
+    await Promise.all(
+      arrayidPhone.map(async (idNumber) => {
+        let idSend = idNumber+tipoSend;
+        const responseExSave = await this.leadExternal.sendFileMessage({ fileData, phone: idSend,tipo,nombreArchivo,isDocument });
         if (responseExSave.id) {
           resultados.push(idNumber);
 

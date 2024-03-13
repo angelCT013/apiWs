@@ -47,6 +47,13 @@ class LeadCtrl {
     const response = await this.leadCreator.enviarAudiosMsj({ audioData, idPhone, isGroup })
     res.send(response);
   };
+  public setFileMsj = async ({ body }: Request, res: Response) => {
+    
+    const { fileData, idPhone, isGroup, tipo, nombreArchivo, isDocument } = body;
+
+    const response = await this.leadCreator.enviarArchivosMsj({ fileData, idPhone, isGroup, tipo, nombreArchivo, isDocument })
+    res.send(response);
+  };
 
 }
 
