@@ -5,5 +5,7 @@ export default interface LeadExternal {
     getMsjChatId({idChat}:{idChat:string}):Promise<any>
     sendAudioMessage({audioData, phone}:{audioData:string, phone:string}):Promise<any>
     sendFileMessage({fileData, phone, tipo, nombreArchivo, isDocument}:{ fileData: string; phone: string; tipo: string; nombreArchivo: string; isDocument:boolean}):Promise<any>
+    setReadMsjWS({idChat}:{idChat:string}):Promise<any>
+
 
 }

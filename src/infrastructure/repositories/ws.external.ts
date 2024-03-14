@@ -1,4 +1,4 @@
-import { Client, LocalAuth, MessageMedia, MessageSendOptions   } from "whatsapp-web.js";
+import { Client, LocalAuth, MessageMedia, MessageSendOptions, Message, MessageAck } from "whatsapp-web.js";
 import { image as imageQr } from "qr-image";
 import LeadExternal from "../../domain/lead-external.repository";
 import { CLASS_CHAT_WHATSAPP } from "../../app";
@@ -18,6 +18,11 @@ interface WhatsAppMessage {
     _attachments?: [{ data: string }];
   };
 
+}
+
+interface dataBody{
+  origen:number,
+  from:string
 }
 class WsTransporter extends Client implements LeadExternal {
   private status = false;
@@ -56,11 +61,24 @@ class WsTransporter extends Client implements LeadExternal {
       this.handleReceivedMessage(msg);
       
     });
-
+    /**
+     * Evento para cuando yo abro la conversacion desde WS
+     * 
+     */
     this.on('unread_count', unread => {
       
-      console.log(unread);
-      
+      if(unread.unreadCount===0){
+        // console.log(unread.unreadCount);
+      this.handleReceivedRead(unread.id.user, 2);
+
+      }
+    });
+
+
+    this.on('message_ack', (message, ack) => {
+
+      this.handleReceivedAck(message, ack);
+    
     });
 
     // this.on('media_uploaded', media => {
@@ -74,6 +92,38 @@ class WsTransporter extends Client implements LeadExternal {
       this.generateImage(qr);
     });
   }
+
+       /**
+       * Función para manejar el atributo ack
+       * ACK_ERROR  : -1
+       * ACK_PENDING:  0
+       * ACK_SERVER :  1
+       * ACK_DEVICE :  2
+       * ACK_READ   :  3
+       * ACK_PLAYED :  4
+       * @param msg Mensaje recibido
+       */
+          /**
+
+     */
+       async handleReceivedAck(message: Message, ack: MessageAck) {
+
+        switch (ack) {
+          case 3:
+            // console.log(message.id.fromMe);
+            // console.log(message.id.remote);
+            // console.log("Este es el valor de ack: "+ack);
+            if(message.id.fromMe){
+              this.handleReceivedRead(message.id.remote.slice(0, -5), 1);
+
+            }
+
+            break;
+        
+          default:
+            break;
+        }
+       }
 
       /**
        * Función para manejar los mensajes recibidos
@@ -133,6 +183,33 @@ class WsTransporter extends Client implements LeadExternal {
 
 
       }
+
+
+
+  /**
+   * Notificar a vr sobre los mensajes leidos
+   * @param message Mensaje a enviar
+   */
+        async handleReceivedRead(from: string, origen:number) {
+        
+
+          try {
+            // console.log(message);
+            let url= `${process.env.API_VR_URL}chat/mensajes/markRead`;
+            const body:dataBody = {
+              origen: origen,
+              from: from,
+            };
+            const response = await PostData(url, body);
+            // console.log(response.data);
+          } catch (error) {
+            if (error instanceof Error) {
+              console.error('Error al enviar el mensaje :', error.message);
+            } else {
+              console.error('Error desconocido al enviar el mensaje');
+            }
+          }
+        }
   /**
    * Enviar mensaje recibidos de Whatsapp
    * @param message Mensaje a enviar
@@ -143,7 +220,7 @@ class WsTransporter extends Client implements LeadExternal {
           let url= `${process.env.API_VR_URL}chat/mensajes/whatsapp`;
 
           const response = await PostData(url, message);
-          console.log(response.data);
+          // console.log(response.data);
         } catch (error) {
           if (error instanceof Error) {
             console.error('Error al enviar el mensaje :', error.message);
@@ -162,10 +239,10 @@ class WsTransporter extends Client implements LeadExternal {
           let url= `${process.env.API_VR_URL}chat/mensajes/whatsapp/files`;
           const newMessage = { ...message, base64Data,mimetype };
           const response = await PostData(url, newMessage);
-          console.log({
-            data:response,
-            message:newMessage
-          });
+          // console.log({
+          //   data:response,
+          //   message:newMessage
+          // });
           return response.data
         } catch (error) {
           if (error instanceof Error) {
@@ -196,14 +273,14 @@ class WsTransporter extends Client implements LeadExternal {
         //   data=this.sendFilesVR(base64Data,message);
         //   break;
         case 'image':
-          console.log(media);
+          // console.log(media);
           
           base64Data = media.data;
           mimetype = media.mimetype;
             data=this.sendFilesVR(base64Data,message,mimetype);
           break;
           case 'document':
-            console.log(media);
+            // console.log(media);
             
             base64Data = media.data;
             mimetype = media.mimetype;
@@ -317,6 +394,20 @@ class WsTransporter extends Client implements LeadExternal {
       // console.log(response);
       
       return { id: response.id.id };
+    } catch (e: any) {
+      return Promise.resolve({ error: e.message });
+    }
+  }
+  async setReadMsjWS(lead: {idChat: string }): Promise<any> {
+    try {
+      if (!this.status) return Promise.resolve({ error: "ERROR AL MARCAR MSJ COMO VISTOS" });
+      const { idChat } = lead;
+
+      const response = await this.sendSeen(idChat);
+      console.log(idChat);
+      console.log(response);
+      
+      return { response };
     } catch (e: any) {
       return Promise.resolve({ error: e.message });
     }

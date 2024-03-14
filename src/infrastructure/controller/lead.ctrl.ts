@@ -55,6 +55,16 @@ class LeadCtrl {
     res.send(response);
   };
 
+  public setMarkReadWS = async ({ body }: Request, res: Response) => {
+    const { idChat } = body;
+    // console.log(idChat);
+    
+    const response = await this.leadCreator.setMarkReadMsjWS({ idChat })
+    res.send(response);
+  };
+
 }
+
+
 
 export default LeadCtrl;

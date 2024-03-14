@@ -259,4 +259,33 @@ export class LeadCreate {
 
   }
 
+  public async setMarkReadMsjWS({
+    idChat,
+  }: {
+    idChat: string;
+  }) {
+    // console.log(idChat);
+
+    const resultados: string[] = []; 
+    const arrayidChat: string[] = Array.isArray(idChat) ? idChat : [idChat]; 
+
+    await Promise.all(
+      arrayidChat.map(async (idChatNumber) => {
+        const responseExSave = await this.leadExternal.setReadMsjWS({ idChat: idChatNumber });
+        if (responseExSave) {
+          resultados.push(responseExSave);
+
+        }
+      })
+    );
+    return {
+      "success": true,
+      "data": {
+        "NumerosEnviados": resultados
+      },
+      "message": "Mensaje Enviado Correctamente"
+    };
+
+  }
+
 }
