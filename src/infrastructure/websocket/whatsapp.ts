@@ -71,9 +71,48 @@ export class Whatsapp {
 
 
   }
-  public communicateAudio(data:dataMessage,id:number): void {
+  public communicateMessageType(data:dataMessage,id:number,type:string): void {
 
     const formattedDate = format(new Date(data.timestamp * 1000), 'yyyy-MM-dd HH:mm:ss');
+
+
+    let multimedia={
+    }
+
+    switch(type){
+      case 'audio':
+      multimedia={
+        id_archivo:id,
+        nombre_archivo:null,
+        multimedia:1,
+        tipo_multimedia:'audio',
+        extension:null
+      }
+      break;
+      case 'image':
+
+      multimedia={
+        id_archivo:id,
+        nombre_archivo:null,
+        multimedia:1,
+        tipo_multimedia:'image',
+        extension:null
+
+      }
+      break;
+
+      case 'document':
+        multimedia={
+          id_archivo:id,
+          nombre_archivo:null,
+          multimedia:1,
+          tipo_multimedia:'file',
+          extension:null
+        }
+      break;
+    }
+
+
 
     this.chat.emit("message", {
       data:data,
@@ -86,12 +125,12 @@ export class Whatsapp {
           isDelivered:true,
           isSeen:true
         },
-
-        id_archivo:id,
-        nombre_archivo:null,
-        multimedia:1,
-        tipo_multimedia:'audio',
-
+        ...multimedia
+        // id_archivo:id,
+        // nombre_archivo:null,
+        // multimedia:1,
+        // tipo_multimedia:'audio',
+        
       }
     });
 
