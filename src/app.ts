@@ -22,10 +22,10 @@
     // Crea un servidor HTTPS con los certificados SSL
     const httpsServer = https.createServer(credentials);
 
-    const port = 443; // Puerto HTTPS
+    // const port = 443; // Puerto HTTPS
 
 
-    // const port = process.env.PORT || 3000
+    const port = process.env.PORT || 443
     const app = express()
     app.use(cors())
     // app.use(express.json())
