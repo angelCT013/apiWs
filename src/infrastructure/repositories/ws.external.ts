@@ -163,21 +163,21 @@ class WsTransporter extends Client implements LeadExternal {
             break;
           case 'ptt':
             data = await this.downloadMediaWS(msg,messageToSend);
-            CLASS_CHAT_WHATSAPP.communicateMessageType(messageToSend,data?.data,"ptt")
+            CLASS_CHAT_WHATSAPP.communicateMessageType(messageToSend,data,"ptt")
             break;
             //NO DESCOMENTAR
           // case "audio":
           //   data = await this.downloadMediaWS(msg,messageToSend);
-          //   CLASS_CHAT_WHATSAPP.communicateMessageType(messageToSend,data?.data,"audio")
+          //   CLASS_CHAT_WHATSAPP.communicateMessageType(messageToSend,data,"audio")
 
           // break;
           case "image":
             data = await this.downloadMediaWS(msg,messageToSend);
-            CLASS_CHAT_WHATSAPP.communicateMessageType(messageToSend,data?.data,"image")
+            CLASS_CHAT_WHATSAPP.communicateMessageType(messageToSend,data,"image")
           break;
           case "document":
             data = await this.downloadMediaWS(msg,messageToSend);
-            CLASS_CHAT_WHATSAPP.communicateMessageType(messageToSend,data?.data,"document")
+            CLASS_CHAT_WHATSAPP.communicateMessageType(messageToSend,data,"document")
           break;
         }
 
@@ -244,6 +244,8 @@ class WsTransporter extends Client implements LeadExternal {
           //   data:response,
           //   message:newMessage
           // });
+          console.log(response.data);
+          
           return response.data
         } catch (error) {
           if (error instanceof Error) {
@@ -267,7 +269,7 @@ class WsTransporter extends Client implements LeadExternal {
       case 'ptt':
         base64Data = media.data;
         mimetype = media.mimetype;
-          data=this.sendFilesVR(base64Data,message,mimetype);
+          data=await this.sendFilesVR(base64Data,message,mimetype);
         break;
         // case 'audio':
         //   base64Data = media.data;
@@ -278,14 +280,16 @@ class WsTransporter extends Client implements LeadExternal {
           
           base64Data = media.data;
           mimetype = media.mimetype;
-            data=this.sendFilesVR(base64Data,message,mimetype);
+            data=await this.sendFilesVR(base64Data,message,mimetype);
+            console.log(data);
+            
           break;
           case 'document':
             // console.log(media);
             
             base64Data = media.data;
             mimetype = media.mimetype;
-              data=this.sendFilesVR(base64Data,message,mimetype);
+              data=await this.sendFilesVR(base64Data,message,mimetype);
             break;
       default:
         break;
