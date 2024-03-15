@@ -1,4 +1,4 @@
-// import { format } from "date-fns";
+import { format } from "date-fns";
 import { Server, Socket } from "socket.io";
 // interface dataMessage {
 //   id_chat: string,
@@ -44,8 +44,8 @@ export class Whatsapp {
 
   public communicateMessage(data:dataMessage): void {
 
-    // const formattedDate = format(new Date(data.timestamp * 1000), 'yyyy-MM-dd HH:mm:ss');
-    const formattedDate =data.timestamp;
+    const formattedDate = format(new Date(data.timestamp * 1000), 'yyyy-MM-dd HH:mm:ss');
+    // const formattedDate =data.timestamp;
     const message={
       data:data,
       message:{
@@ -73,8 +73,8 @@ export class Whatsapp {
   }
   public communicateMessageType(data:dataMessage,id:number,type:string): void {
 
-    // const formattedDate = format(new Date(data.timestamp * 1000), 'yyyy-MM-dd HH:mm:ss');
-    const formattedDate = data.timestamp;
+    const formattedDate = format(new Date(data.timestamp * 1000), 'yyyy-MM-dd HH:mm:ss');
+    // const formattedDate = data.timestamp;
 
 
     let multimedia={
