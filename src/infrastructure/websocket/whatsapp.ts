@@ -61,6 +61,7 @@ export class Whatsapp {
         id_archivo:null,
         nombre_archivo:null,
         multimedia:0,
+        extension:null,
         tipo_multimedia:null,
       }
     }
@@ -71,44 +72,22 @@ export class Whatsapp {
 
 
   }
-  public communicateMessageType(data:dataMessage,id:number,type:string): void {
-
+  public communicateMessageType(data:dataMessage,file:{id:number,nombre_archivo:string,extension:string},type:string): void {
+    
     const formattedDate = format(new Date(data.timestamp * 1000), 'yyyy-MM-dd HH:mm:ss');
 
 
-    let multimedia={
-    }
+    let multimedia = {}
 
     switch(type){
       case 'audio':
-      multimedia={
-        id_archivo:id,
-        nombre_archivo:null,
-        multimedia:1,
-        tipo_multimedia:'audio',
-        extension:null
-      }
+      multimedia={tipo_multimedia:'audio'}
       break;
       case 'image':
-
-      multimedia={
-        id_archivo:id,
-        nombre_archivo:null,
-        multimedia:1,
-        tipo_multimedia:'image',
-        extension:null
-
-      }
+      multimedia={tipo_multimedia:'image'}
       break;
-
       case 'document':
-        multimedia={
-          id_archivo:id,
-          nombre_archivo:null,
-          multimedia:1,
-          tipo_multimedia:'file',
-          extension:null
-        }
+        multimedia={tipo_multimedia:'file'}
       break;
     }
 
@@ -125,12 +104,11 @@ export class Whatsapp {
           isDelivered:true,
           isSeen:true
         },
-        ...multimedia
-        // id_archivo:id,
-        // nombre_archivo:null,
-        // multimedia:1,
-        // tipo_multimedia:'audio',
-        
+          id_archivo:file.id,
+          nombre_archivo:file.nombre_archivo,
+          multimedia:1,
+          extension:file.extension,
+          ...multimedia
       }
     });
 
@@ -169,9 +147,11 @@ export class Whatsapp {
             time: '2024-03-07 11:41:37',
             senderId: null,
             feedback: { isSent: true, isDelivered: true, isSeen: true },
+            
             id_archivo: null,
             nombre_archivo: null,
             multimedia: 0,
+            extension:null,
             tipo_multimedia: null
           }
         });
