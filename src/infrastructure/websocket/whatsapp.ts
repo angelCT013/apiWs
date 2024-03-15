@@ -45,7 +45,7 @@ export class Whatsapp {
   public communicateMessage(data:dataMessage): void {
 
     const formattedDate = format(new Date(data.timestamp * 1000), 'yyyy-MM-dd HH:mm:ss');
-
+    // const formattedDate =data.timestamp;
     const message={
       data:data,
       message:{
@@ -75,6 +75,7 @@ export class Whatsapp {
   public communicateMessageType(data:dataMessage,file:{id:number,nombre_archivo:string,extension:string},type:string): void {
     
     const formattedDate = format(new Date(data.timestamp * 1000), 'yyyy-MM-dd HH:mm:ss');
+    // const formattedDate = data.timestamp;
 
 
     let multimedia = {}
