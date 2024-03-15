@@ -165,11 +165,12 @@ class WsTransporter extends Client implements LeadExternal {
             data = await this.downloadMediaWS(msg,messageToSend);
             CLASS_CHAT_WHATSAPP.communicateMessageType(messageToSend,data?.data,"ptt")
             break;
-          case "audio":
-            data = await this.downloadMediaWS(msg,messageToSend);
-            CLASS_CHAT_WHATSAPP.communicateMessageType(messageToSend,data?.data,"audio")
+            //NO DESCOMENTAR
+          // case "audio":
+          //   data = await this.downloadMediaWS(msg,messageToSend);
+          //   CLASS_CHAT_WHATSAPP.communicateMessageType(messageToSend,data?.data,"audio")
 
-          break;
+          // break;
           case "image":
             data = await this.downloadMediaWS(msg,messageToSend);
             CLASS_CHAT_WHATSAPP.communicateMessageType(messageToSend,data?.data,"image")
