@@ -76,7 +76,8 @@ export class Whatsapp {
     
     const formattedDate = format(new Date(data.timestamp * 1000), 'yyyy-MM-dd HH:mm:ss');
     // const formattedDate = data.timestamp;
-
+    console.log(file);
+    
 
     let multimedia = {}
 
