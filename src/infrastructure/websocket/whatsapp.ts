@@ -82,7 +82,7 @@ export class Whatsapp {
     let multimedia = {}
 
     switch(type){
-      case 'audio':
+      case 'ptt':
       multimedia={tipo_multimedia:'audio'}
       break;
       case 'image':
