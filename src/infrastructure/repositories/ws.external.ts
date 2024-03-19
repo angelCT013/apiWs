@@ -24,6 +24,11 @@ interface dataBody{
   origen:number,
   from:string
 }
+interface statusSessionConexion{
+  status:boolean,
+  message:string
+}
+
 class WsTransporter extends Client implements LeadExternal {
   private status = false;
   constructor() {
@@ -42,17 +47,46 @@ class WsTransporter extends Client implements LeadExternal {
     },
     });
 
+    
     console.log("Iniciando....");
 
     this.initialize();
 
     this.on("ready", () => {
+      
       this.status = true;
+
+      this.setStatusConexion({
+        status:true,
+        message:"Sesión Iniciada Correctamente"
+      })
+      
       console.log("LOGIN_SUCCESS");
+
+    });
+
+    this.on("disconnected", () => {
+
+      this.status = false;
+
+      this.setStatusConexion({
+        status:false,
+        message:"Sesión Cerrada"
+      })
+
+      console.log("DISCONNECTED");
+
     });
 
     this.on("auth_failure", () => {
+
       this.status = false;
+
+      this.setStatusConexion({
+        status:false,
+        message:"Error al Iniciar Sesión"
+      })
+
       console.log("LOGIN_FAIL");
     });
 
@@ -88,11 +122,18 @@ class WsTransporter extends Client implements LeadExternal {
       
     // });
     this.on("qr", (qr) => {
-      console.log("Escanea el codigo QR que esta en la carepta tmp");
+      console.log("Escanea el codigo QR que esta en la carpeta tmp");
       this.generateImage(qr);
     });
+
   }
 
+  setStatusConexion(statusSession:statusSessionConexion){
+    
+    CLASS_CHAT_WHATSAPP.setSessionWhatsapp(statusSession)
+    CLASS_CHAT_WHATSAPP.communicateStatusSession(statusSession)
+
+  }
        /**
        * Función para manejar el atributo ack
        * ACK_ERROR  : -1

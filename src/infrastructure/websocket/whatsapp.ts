@@ -21,31 +21,38 @@ interface dataMessage{
   timestamp:number,
   isGroup:number,
 }
-export class Whatsapp {
+interface statusSession{
+  status:boolean,
+  message:string
+}
+export class Whatsapp{
   private chat: Server;
+  private session_whatsapp:statusSession={
+    status:false,
+    message:'Sesión No Iniciada'
+  };
 
   constructor(main: Server) {
     this.chat = main;
+    
 
     this.events();
+
+
   }
 
-  public testing(event: any,data:object): void {
-    console.log("TEST EXITOSO");
-    // // event.emit("sendMsg", {
-    // //   message: "tenst",
-    // //   phone: '5216647116804'
-    // // });
-    //     event.sendMsg({
-    //   message:"tenst",
-    //   phone:'5216647116804'
-    // })
+  public setSessionWhatsapp(status:statusSession){
+    this.session_whatsapp=status
+  }
+
+
+  public communicateStatusSession(data:statusSession):void{    
+    this.chat.emit("status_session",data);
   }
 
   public communicateMessage(data:dataMessage): void {
 
     const formattedDate = format(new Date(data.timestamp * 1000), 'yyyy-MM-dd HH:mm:ss');
-    // const formattedDate =data.timestamp;
     const message={
       data:data,
       message:{
@@ -119,21 +126,29 @@ export class Whatsapp {
 
   private events(): void {
     this.chat.on("connection", (socket: Socket) => {
-      // const token: string = socket?.handshake?.auth?.token;
       const username: string = socket?.handshake?.auth?.username;
-
+      
       console.log({
         text:`Usuario Conectado ${username}`,
       });
 
+
       /**
-       * Envío de mensajes para transmitir a los demás usuarios
+       * ?Envío de mensajes para transmitir a los demás usuarios
        */
       socket.on("message", (arg: any) => {
         this.chat.emit("message", arg);
         
       });
+
+      socket.on("get_status_session", (arg: any) => {
+        this.communicateStatusSession(this.session_whatsapp)
+      })
+
       socket.on("message_test", (arg: any) => {
+        
+        
+        
         this.chat.emit("message", 
         {
           data: {
