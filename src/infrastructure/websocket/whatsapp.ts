@@ -20,6 +20,7 @@ interface dataMessage{
   author:string,
   timestamp:number,
   isGroup:number,
+  nameWs:string
 }
 interface statusSession{
   status:boolean,
@@ -63,6 +64,12 @@ export class Whatsapp{
           isSent:true,
           isDelivered:true,
           isSeen:true
+        },
+        origen :{
+          estatus : 2,
+          nombre : data.nameWs,
+          numero : data.author,
+          id_usuario : null,
         },
 
         id_archivo:null,
@@ -112,6 +119,12 @@ export class Whatsapp{
           isSent:true,
           isDelivered:true,
           isSeen:true
+        },
+        origen :{
+          estatus : 2,
+          nombre : data.nameWs,
+          numero : data.author,
+          id_usuario : null,
         },
           id_archivo:file.id,
           nombre_archivo:file.nombre_archivo,

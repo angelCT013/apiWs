@@ -184,7 +184,7 @@ class WsTransporter extends Client implements LeadExternal {
           author:string,
           timestamp:number,
           isGroup:number,
-          nameWs?:string,
+          nameWs:string,
           to:string
         }
 
