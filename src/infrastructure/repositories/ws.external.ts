@@ -19,6 +19,11 @@ interface WhatsAppMessage {
     _attachments?: [{ data: string }];
     notifyName?: string; 
   };
+  id?:{
+    id:string;
+    _serialized:string;
+
+  }
 
 }
 
@@ -185,12 +190,20 @@ class WsTransporter extends Client implements LeadExternal {
           timestamp:number,
           isGroup:number,
           nameWs:string,
-          to:string
+          to:string,
+          idMsg:string,
+          serialized:string
         }
 
         let nameWS = '';
           if (msg._data && msg._data.notifyName) {
               nameWS = msg._data.notifyName;
+          }
+          let idMsg = '';
+          let serialized = '';
+          if (msg.id) {
+            idMsg =  msg.id.id;
+            serialized = msg.id._serialized;
           }
 
         const messageToSend:dataMessage = {
@@ -201,7 +214,9 @@ class WsTransporter extends Client implements LeadExternal {
           timestamp: msg.timestamp,
           isGroup: msg.from.endsWith('@g.us') ? 1 : 0,
           nameWs: nameWS,
-          to: msg.to.slice(0, -5)
+          to: msg.to.slice(0, -5),
+          idMsg: idMsg,
+          serialized: serialized
         };
         console.log(messageToSend);
         // console.log(msg);
@@ -462,6 +477,22 @@ class WsTransporter extends Client implements LeadExternal {
       const { idChat } = lead;
 
       const response = await this.sendSeen(idChat);
+      // console.log(idChat);
+      // console.log(response);
+      
+      return { response };
+    } catch (e: any) {
+      return Promise.resolve({ error: e.message });
+    }
+  }
+  async setResponseMsjWS(lead: {idSerialized: string, msg: string }): Promise<any> {
+    try {
+      if (!this.status) return Promise.resolve({ error: "ERROR AL MARCAR MSJ COMO VISTOS" });
+      const { idSerialized, msg } = lead;
+
+      const response = await this.getMessageById(idSerialized);
+
+      response.reply(msg);
       // console.log(idChat);
       // console.log(response);
       

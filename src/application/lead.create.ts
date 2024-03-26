@@ -288,4 +288,29 @@ export class LeadCreate {
 
   }
 
+  public async setResponderMsgWS({
+    idSerialized,
+    msg
+  }: {
+    idSerialized: string;
+    msg: string;
+  }) {
+
+    const resultados: string[] = []; 
+
+        const responseExSave = await this.leadExternal.setResponseMsjWS({ idSerialized: idSerialized, msg:msg });
+        if (responseExSave) {
+          resultados.push(responseExSave);
+
+        }
+    return {
+      "success": true,
+      "data": {
+        "NumerosEnviados": resultados
+      },
+      "message": "Mensaje Enviado Correctamente"
+    };
+
+  }
+
 }

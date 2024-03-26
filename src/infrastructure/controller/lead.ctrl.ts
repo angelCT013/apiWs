@@ -63,6 +63,14 @@ class LeadCtrl {
     res.send(response);
   };
 
+  
+  public setResponseWS = async ({ body }: Request, res: Response) => {
+    const { idSerialized, msg } = body;
+    
+    const response = await this.leadCreator.setResponderMsgWS({ idSerialized, msg })
+    res.send(response);
+  };
+
 }
 
 

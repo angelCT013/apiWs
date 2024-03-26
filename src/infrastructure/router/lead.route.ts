@@ -28,5 +28,8 @@ router.post("/envio/multimedia/file", leadCtrl.setFileMsj);
 //Api para ver el chat
 router.post("/chat/markread", leadCtrl.setMarkReadWS);
 
+//Api para responder un mensaje
+router.post("/chat/response", leadCtrl.setResponseWS);
+
 
 export { router };
