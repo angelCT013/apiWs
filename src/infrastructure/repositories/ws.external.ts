@@ -5,17 +5,19 @@ import { CLASS_CHAT_WHATSAPP } from "../../app";
 const { GetData, PostData, PutData} = require('../../utils/api');
 // import { GetData } from "../../utils/api"
 /**
- * Extendemos los super poderes de whatsapp-web
+ * Extendemos los super poderes de whatsapp-web 
  */
 
 interface WhatsAppMessage {
   body: string;
   from: string;
+  to: string;
   type: string;
   author?: string;
   timestamp: number;
   _data?: {
     _attachments?: [{ data: string }];
+    notifyName?: string; 
   };
 
 }
@@ -182,7 +184,14 @@ class WsTransporter extends Client implements LeadExternal {
           author:string,
           timestamp:number,
           isGroup:number,
+          nameWs?:string,
+          to:string
         }
+
+        let nameWS = '';
+          if (msg._data && msg._data.notifyName) {
+              nameWS = msg._data.notifyName;
+          }
 
         const messageToSend:dataMessage = {
           body: consolidatedBody,
@@ -190,15 +199,18 @@ class WsTransporter extends Client implements LeadExternal {
           type: msg.type,
           author: msg.author ? msg.author.slice(0, -5) :msg.from.slice(0, -5),
           timestamp: msg.timestamp,
-          isGroup: msg.from.endsWith('@g.us') ? 1 : 0
+          isGroup: msg.from.endsWith('@g.us') ? 1 : 0,
+          nameWs: nameWS,
+          to: msg.to.slice(0, -5)
         };
-        // console.log(messageToSend);
+        console.log(messageToSend);
         // console.log(msg);
         
         let data:any;
-        
+
         switch (msg.type) {
           case 'chat':
+
             this.sendMsgTextVR(messageToSend);
             CLASS_CHAT_WHATSAPP.communicateMessage(messageToSend)
             break;
@@ -262,7 +274,7 @@ class WsTransporter extends Client implements LeadExternal {
           let url= `${process.env.API_VR_URL}chat/mensajes/whatsapp`;
 
           const response = await PostData(url, message);
-          // console.log(response.data);
+          console.log(response.data);
         } catch (error) {
           if (error instanceof Error) {
             console.error('Error al enviar el mensaje :', error.message);
@@ -285,7 +297,7 @@ class WsTransporter extends Client implements LeadExternal {
           //   data:response,
           //   message:newMessage
           // });
-          console.log(response.data);
+          // console.log(response.data);
           
           return response.data
         } catch (error) {
@@ -322,7 +334,7 @@ class WsTransporter extends Client implements LeadExternal {
           base64Data = media.data;
           mimetype = media.mimetype;
             data=await this.sendFilesVR(base64Data,message,mimetype);
-            console.log(data);
+            // console.log(data);
             
           break;
           case 'document':
@@ -450,8 +462,8 @@ class WsTransporter extends Client implements LeadExternal {
       const { idChat } = lead;
 
       const response = await this.sendSeen(idChat);
-      console.log(idChat);
-      console.log(response);
+      // console.log(idChat);
+      // console.log(response);
       
       return { response };
     } catch (e: any) {
