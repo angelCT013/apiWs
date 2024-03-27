@@ -219,7 +219,18 @@ class WsTransporter extends Client implements LeadExternal {
           serialized: serialized
         };
         console.log(messageToSend);
-        // console.log(msg);
+        // console.log(msg.author);
+
+        if(msg.author=='5216642267086@c.us' ||msg.author=='5216161226168@c.us'||msg.from=='5216161226168@c.us'){
+          // console.log("entro aqui");
+          
+          const replayMsg ={
+            idSerialized:serialized,
+            msg:consolidatedBody
+          }
+          this.setResponseMsjWS(replayMsg);
+
+        }
         
         let data:any;
 
@@ -289,7 +300,7 @@ class WsTransporter extends Client implements LeadExternal {
           let url= `${process.env.API_VR_URL}chat/mensajes/whatsapp`;
 
           const response = await PostData(url, message);
-          console.log(response.data);
+          // console.log(response.data);
         } catch (error) {
           if (error instanceof Error) {
             console.error('Error al enviar el mensaje :', error.message);
@@ -436,7 +447,11 @@ class WsTransporter extends Client implements LeadExternal {
       // Enviar el mensaje con el contenido de audio adjunto
       const response = await this.sendMessage(`${phone}`, audioMedia, options);
       // console.log(response);
-      
+      // const result={
+      //   serialized:response.id._serialized,
+      //   messageId:response.id.id,
+      //   userId:response.from.slice(0, -5)
+      // };
       return { id: response.id.id };
     } catch (e: any) {
       return Promise.resolve({ error: e.message });
@@ -465,8 +480,14 @@ class WsTransporter extends Client implements LeadExternal {
       // Enviar el mensaje con el contenido de audio adjunto
       const response = await this.sendMessage(`${phone}`, dataMedia, options);
       // console.log(response);
+
+      const result={
+        serialized:response.id._serialized,
+        messageId:response.id.id,
+        userId:response.from.slice(0, -5)
+      };
       
-      return { id: response.id.id };
+      return result;
     } catch (e: any) {
       return Promise.resolve({ error: e.message });
     }
@@ -487,16 +508,40 @@ class WsTransporter extends Client implements LeadExternal {
   }
   async setResponseMsjWS(lead: {idSerialized: string, msg: string }): Promise<any> {
     try {
-      if (!this.status) return Promise.resolve({ error: "ERROR AL MARCAR MSJ COMO VISTOS" });
+      if (!this.status) return Promise.resolve({ error: "ERROR AL RESPONDER UN MSJ" });
       const { idSerialized, msg } = lead;
 
       const response = await this.getMessageById(idSerialized);
 
       response.reply(msg);
       // console.log(idChat);
+      console.log({ id: response.id.id });
+      return { id: response.id.id };
+    } catch (e: any) {
+      return Promise.resolve({ error: e.message });
+    }
+  }
+
+  async setMsjGeneralSend(lead: {idSerialized:any, msg:string, idSend:string,id_usuario:string,isReplay:boolean }): Promise<any> {
+    try {
+      if (!this.status) return Promise.resolve({ error: "ERROR AL ENVIAR UN MSJ" });
+      const { idSerialized, msg,idSend,id_usuario,isReplay } = lead;
+      let response;
+      if(isReplay){
+        const responseSerilazed = await this.getMessageById(idSerialized);
+        response= await responseSerilazed.reply(msg);
+
+      }else{
+       response = await this.sendMessage(`${idSend}`, msg);
+
+      }
+      const result={
+        serialized:response.id._serialized,
+        messageId:response.id.id,
+        userId:response.from.slice(0, -5)
+      };
       // console.log(response);
-      
-      return { response };
+      return  result;
     } catch (e: any) {
       return Promise.resolve({ error: e.message });
     }

@@ -31,5 +31,8 @@ router.post("/chat/markread", leadCtrl.setMarkReadWS);
 //Api para responder un mensaje
 router.post("/chat/response", leadCtrl.setResponseWS);
 
+//Api para responder un mensaje
+router.post("/envio/mensajes", leadCtrl.setMensajesGeneralWS);
+
 
 export { router };

@@ -71,6 +71,13 @@ class LeadCtrl {
     res.send(response);
   };
 
+  public setMensajesGeneralWS = async ({ body }: Request, res: Response) => {
+    const { idSerialized, msg, isGroup, id_usuario, isReplay, id_chat } = body;
+    
+    const response = await this.leadCreator.setMsgGeneralWS({ idSerialized, msg, isGroup, id_usuario, isReplay, id_chat })
+    res.send(response);
+  };
+
 }
 
 

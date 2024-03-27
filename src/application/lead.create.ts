@@ -313,4 +313,33 @@ export class LeadCreate {
 
   }
 
+  public async setMsgGeneralWS({
+    idSerialized,
+    msg,
+    isGroup,
+    id_usuario,
+    isReplay,
+    id_chat
+  }: {
+    idSerialized: any;
+    msg: string;
+    isGroup: boolean;
+    id_usuario: string;
+    isReplay: boolean;
+    id_chat: string;
+
+  }) {
+
+    const tipoSend = isGroup ? '@g.us':'@c.us';
+    let idSend = id_chat+tipoSend;
+        const responseExSave = await this.leadExternal.setMsjGeneralSend({ idSerialized: idSerialized, msg:msg, idSend:idSend,id_usuario:id_usuario, isReplay:isReplay  });
+
+    return {
+      "success": true,
+      "data": responseExSave,
+      "message": "Mensaje Enviado Correctamente"
+    };
+
+  }
+
 }
