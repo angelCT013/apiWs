@@ -42,16 +42,16 @@ class LeadCtrl {
   };
 
   public setAudioMsj = async ({ body }: Request, res: Response) => {
-    const { audioData, idPhone, isGroup } = body;
+    const { audioData, idPhone, isGroup, id_user, id_file_vr, idSerialized } = body;
 
-    const response = await this.leadCreator.enviarAudiosMsj({ audioData, idPhone, isGroup })
+    const response = await this.leadCreator.enviarAudiosMsj({ audioData, idPhone, isGroup, id_user, id_file_vr, idSerialized })
     res.send(response);
   };
   public setFileMsj = async ({ body }: Request, res: Response) => {
     
-    const { fileData, idPhone, isGroup, tipo, nombreArchivo, isDocument } = body;
+    const { fileData, idPhone, isGroup, tipo, nombreArchivo, isDocument, id_user, msg, id_file_vr, idSerialized } = body;
 
-    const response = await this.leadCreator.enviarArchivosMsj({ fileData, idPhone, isGroup, tipo, nombreArchivo, isDocument })
+    const response = await this.leadCreator.enviarArchivosMsj({ fileData, idPhone, isGroup, tipo, nombreArchivo, isDocument, id_user, msg, id_file_vr, idSerialized })
     res.send(response);
   };
 

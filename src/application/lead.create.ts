@@ -190,31 +190,27 @@ export class LeadCreate {
     audioData,
     idPhone,
     isGroup,
+    id_user, 
+    id_file_vr,
+    idSerialized
   }: {
     audioData: string;
     idPhone: string;
     isGroup:boolean;
+    id_user: number; 
+    id_file_vr: number;
+    idSerialized:any;
   }) {
-    // console.log(idPhone);
 
-    const resultados: string[] = []; 
-    const arrayidPhone: string[] = Array.isArray(idPhone) ? idPhone : [idPhone]; 
     const tipo = isGroup ? '@g.us':'@c.us';
-    await Promise.all(
-      arrayidPhone.map(async (idNumber) => {
-        let idSend = idNumber+tipo;
-        const responseExSave = await this.leadExternal.sendAudioMessage({ audioData, phone: idSend });
-        if (responseExSave.id) {
-          resultados.push(idNumber);
+    let idSend = idPhone+tipo;
+    const responseExSave = await this.leadExternal.sendAudioMessage({ audioData, phone: idSend,id_user, id_file_vr,idSerialized });
 
-        }
-      })
-    );
+    console.log(responseExSave);
+
     return {
       "success": true,
-      "data": {
-        "NumerosEnviados": resultados
-      },
+      "data": responseExSave,
       "message": "Mensaje Enviado Correctamente"
     };
 
@@ -225,7 +221,11 @@ export class LeadCreate {
     isGroup,
     tipo,
     nombreArchivo,
-    isDocument
+    isDocument,
+    id_user, 
+    msg, 
+    id_file_vr,
+    idSerialized
   }: {
     fileData: string;
     idPhone: string;
@@ -233,27 +233,22 @@ export class LeadCreate {
     tipo:string;
     nombreArchivo:string;
     isDocument:boolean;
+    id_user:number; 
+    msg:string; 
+    id_file_vr:number;
+    idSerialized:any;
+
   }) {
-    // console.log(idPhone);
 
-    const resultados: string[] = []; 
-    const arrayidPhone: string[] = Array.isArray(idPhone) ? idPhone : [idPhone]; 
     const tipoSend = isGroup ? '@g.us':'@c.us';
-    await Promise.all(
-      arrayidPhone.map(async (idNumber) => {
-        let idSend = idNumber+tipoSend;
-        const responseExSave = await this.leadExternal.sendFileMessage({ fileData, phone: idSend,tipo,nombreArchivo,isDocument });
-        if (responseExSave.id) {
-          resultados.push(idNumber);
-
-        }
-      })
-    );
+    let idSend = idPhone+tipoSend;
+    
+    const responseExSave = await this.leadExternal.sendFileMessage({ fileData, phone: idSend,tipo,nombreArchivo,isDocument,id_user,msg,id_file_vr,idSerialized});
+    console.log(responseExSave);
+    
     return {
       "success": true,
-      "data": {
-        "NumerosEnviados": resultados
-      },
+      "data": responseExSave,
       "message": "Mensaje Enviado Correctamente"
     };
 

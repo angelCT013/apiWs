@@ -221,16 +221,16 @@ class WsTransporter extends Client implements LeadExternal {
         console.log(messageToSend);
         // console.log(msg.author);
 
-        if(msg.author=='5216642267086@c.us' ||msg.author=='5216161226168@c.us'||msg.from=='5216161226168@c.us'){
-          // console.log("entro aqui");
+        // if(msg.author=='5216642267086@c.us' ||msg.author=='5216161226168@c.us'||msg.from=='5216161226168@c.us'){
+        //   // console.log("entro aqui");
           
-          const replayMsg ={
-            idSerialized:serialized,
-            msg:consolidatedBody
-          }
-          this.setResponseMsjWS(replayMsg);
+        //   const replayMsg ={
+        //     idSerialized:serialized,
+        //     msg:consolidatedBody
+        //   }
+        //   this.setResponseMsjWS(replayMsg);
 
-        }
+        // }
         
         let data:any;
 
@@ -427,11 +427,11 @@ class WsTransporter extends Client implements LeadExternal {
       return Promise.resolve({ error: e.message });
     }
   }
-  async sendAudioMessage(lead: { audioData: string; phone: string }): Promise<any> {
+  async sendAudioMessage(lead: { audioData: string; phone: string; id_user:number; id_file_vr:number; idSerialized:any;}): Promise<any> {
     try {
       if (!this.status) return Promise.resolve({ error: "ERROR AL MANDAR AUDIO (WHATSAPP)" });
   
-      const { audioData, phone } = lead;
+      const { audioData, phone, id_user, id_file_vr, idSerialized } = lead;
   
       // Crear una instancia de MessageMedia con el contenido de audio PTT
       const audioMedia = new MessageMedia('audio/ogg; codecs=opus', audioData, 'audio.ogg');
@@ -439,47 +439,54 @@ class WsTransporter extends Client implements LeadExternal {
       
       const options: MessageSendOptions = {
         linkPreview: false, 
-        sendAudioAsVoice: true 
+        sendAudioAsVoice: true,
+        quotedMessageId:idSerialized
+
       };
+      
       // console.log(phone);
       // console.log(options);
       
       // Enviar el mensaje con el contenido de audio adjunto
       const response = await this.sendMessage(`${phone}`, audioMedia, options);
       // console.log(response);
-      // const result={
-      //   serialized:response.id._serialized,
-      //   messageId:response.id.id,
-      //   userId:response.from.slice(0, -5)
-      // };
-      return { id: response.id.id };
+      const result={
+        serialized:response.id._serialized,
+        messageId:response.id.id,
+        userId:response.from.slice(0, -5)
+      };
+      return result;
     } catch (e: any) {
       return Promise.resolve({ error: e.message });
     }
   }
 
-  async sendFileMessage(lead: { fileData: string; phone: string; tipo: string; nombreArchivo: string; isDocument:boolean }): Promise<any> {
+  async sendFileMessage(lead: { fileData: string; phone: string; tipo: string; nombreArchivo: string; isDocument:boolean; id_user:number; msg:string; id_file_vr:number; idSerialized:any;}): Promise<any> {
     try {
       if (!this.status) return Promise.resolve({ error: "ERROR AL MANDAR ARCHIVO (WHATSAPP)" });
   
-      const { fileData, phone,tipo, nombreArchivo,isDocument } = lead;
+      const { fileData, phone,tipo, nombreArchivo,isDocument,id_user,msg,id_file_vr, idSerialized } = lead;
   
       const dataMedia = new MessageMedia(tipo, fileData, nombreArchivo);
       // console.log(dataMedia);
       
       const options: MessageSendOptions = {
-        linkPreview: true
+        linkPreview: true,
+        caption: msg,
+        quotedMessageId:idSerialized
       };
          // Verificar si el archivo es un documento
       if (isDocument) {
           options.sendMediaAsDocument = true;
       }
       
+      // options.quotedMessageId = idSerialized;
+      
       
 
       // Enviar el mensaje con el contenido de audio adjunto
       const response = await this.sendMessage(`${phone}`, dataMedia, options);
-      // console.log(response);
+      console.log(response);
 
       const result={
         serialized:response.id._serialized,
